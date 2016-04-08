@@ -1,8 +1,11 @@
 __author__ = 'stephanie'
+import pytest
 
 from odm2api.ODMconnection import dbconnection
-from odm2api.versionSwitcher import ODM, refreshDB
+#from odm2api.versionSwitcher import ODM, refreshDB
 
+@pytest.mark.skipif(True,
+                    reason="ODM1.1 shim is out of date")
 class TestSwitch:
 
     def setup(self):
