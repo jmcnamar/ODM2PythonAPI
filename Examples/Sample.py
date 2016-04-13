@@ -8,8 +8,8 @@ from matplotlib import dates
 
 
 from odm2api.ODMconnection import dbconnection
-from odm2api.ODM2.services.readService import *
-from odm2api.ODM2.services import CreateODM2
+from odm2api.services.readService import *
+from odm2api.services import CreateODM2
 # Create a connection to the ODM2 database
 # ----------------------------------------
 
@@ -67,7 +67,7 @@ except Exception as e:
 
 # Now get the SamplingFeature object for a SamplingFeature code
 try:
-    sf = read.getSamplingFeatures(code=['USU-LBR-Mendon'])[0]
+    sf = read.getSamplingFeatures(codes=['USU-LBR-Mendon'])[0]
     print "\n-------- Information about an individual SamplingFeature ---------"
     print "The following are some of the attributes of a SamplingFeature retrieved using getSamplingFeature(code = x): \n"
     print "SamplingFeatureCode: " + sf.SamplingFeatureCode

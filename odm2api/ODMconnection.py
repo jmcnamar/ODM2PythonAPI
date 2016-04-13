@@ -3,47 +3,17 @@ from sqlalchemy.exc import SQLAlchemyError, DBAPIError
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
-from .ODM2.models import Variables as Variable2, setSchema
-#from .versionSwitcher import ODM, refreshDB #import Variable as Variable1
-from .ODM1_1_1.services import ODM#, refreshDB
+from .models import Variables as Variable2, setSchema
+
 import urllib
 import sys
 import os
-import pyodbc
 
-# LIBSPATIALITE_PATH = './libspatialite.so.5.1.0'
+
 
 class SessionFactory():
-    def __init__(self, connection_string, echo, version = 1.1):
+    def __init__(self, connection_string, echo):
         if 'sqlite' in connection_string:
-            # from sqlite3 import dbapi2 as sqlite
-            # put the spatialite dll on the path. If one had pyspatialite installed thn
-            # this would not be required... but trying to get that on a windows machine
-            # was way too hard to bother
-            # dirDLLspatialite = 'C:/bin'
-            # os.environ['PATH'] = dirDLLspatialite + ';' + os.environ['PATH']
-
-            # #engine = create_engine('sqlite:///D:\\temp\\test_1.db', module=sqlite, echo=False)
-            # engine = create_engine(connection_string, module=sqlite, echo=False)
-
-            # this enables the extension on each connection
-            # @event.listens_for(engine, "connect")
-            # def connect(dbapi_connection, connection_rec):
-            #     dbapi_connection.enable_load_extension(True)
-            #     dbapi_connection.execute("SELECT load_extension('libspatialite-4.dll')")
-
-            #from pysqlite2 import dbapi2 as sqlite
-            #import pyspatialite.dpabi as sqlite
-            # self.engine = create_engine(connection_string, model = sqlite ,encoding='utf-8', echo=echo)
-
-            # @event.listens_for(self.engine, "connect")
-            # def connect(dbapi_connection, connection_rec):
-            #         dbapi_connection.enable_load_extension(True)
-            #         dbapi_connection.execute("SELECT load_extension('{0}');".format("mod_spatialite"))
-
-            # self.engine.execute("SELECT InitSpatialMetaData();")#
-            # self.engine.connect().connection.enable_load_extension(True)
-            # self.engine.execute("SELECT load_extension('mod_spatialite');")#
             self.engine = create_engine(connection_string,  encoding='utf-8', echo=echo)
             self.test_engine = self.engine
 
@@ -57,7 +27,7 @@ class SessionFactory():
         # Create session maker
         self.Session = sessionmaker(bind=self.engine)
         self.test_Session = sessionmaker(bind=self.test_engine)
-        self.version=version
+
 
     def getSession(self):
         return self.Session()
@@ -74,18 +44,18 @@ class dbconnection():
         self._connection_format = "%s+%s://%s:%s@%s/%s"
 
     @classmethod
-    def createConnection(self, engine, address, db=None, user=None, password=None, dbtype = 2.0):
+    def createConnection(self, engine, address, db=None, user=None, password=None):
 
         if engine == 'sqlite':
             connection_string = engine +':///'+address
-            s = SessionFactory(connection_string, echo = False, version= dbtype)
+            s = SessionFactory(connection_string, echo = False)
             setSchema(s.engine)
             return s
 
         else:
             connection_string = dbconnection.buildConnDict(dbconnection(), engine, address, db, user, password)
-            if self.isValidConnection(connection_string, dbtype):
-                s= SessionFactory(connection_string, echo = False, version= dbtype)
+            if self.isValidConnection(connection_string):
+                s= SessionFactory(connection_string, echo = False)
                 setSchema(s.engine)
                 return s
             else :
@@ -93,21 +63,14 @@ class dbconnection():
         # if self.testConnection(connection_string):
 
     @classmethod
-    def isValidConnection(self, connection_string, dbtype=2.0):
-        #refreshDB(dbtype)
+    def isValidConnection(self, connection_string):
 
-        if dbtype == 2.0:
-            if self.testEngine(connection_string):
-                # print "sucess"
-               return True
-            else:
-                return False
+        if self.testEngine(connection_string):
+            # print "sucess"
+           return True
         else:
-            if self.testEngine1_1(connection_string):
-                # print "sucess"
-                return True
-            else:
-                return False
+            return False
+
 
     @classmethod
     def testEngine(self, connection_string):
@@ -121,17 +84,6 @@ class dbconnection():
             return False
         return True
 
-    @classmethod
-    def testEngine1_1(self, connection_string):
-        s = SessionFactory(connection_string, echo=False)
-        try:
-            # s.ms_test_Session().query(Variable1).limit(1).first()
-            s.test_Session().query(ODM.Variable.code).limit(1).first()
-
-        except Exception as e:
-            print "Connection was unsuccessful ", e.message
-            return False
-        return True
 
     def buildConnDict(self, engine, address, db, user, password):
         line_dict = {}
@@ -163,26 +115,7 @@ class dbconnection():
     def deleteConnection(self, conn_dict):
         self._connections[:] = [x for x in self._connections if x != conn_dict]
 
-    ## ###################
-    # private variables
-    ## ###################
 
-    # def __buildConnectionString(self, conn_dict):
-    #     driver = ""
-    #     if conn_dict['engine'] == 'mssql':
-    #         driver = "pyodbc"
-    #     elif conn_dict['engine'] == 'mysql':
-    #         driver = "pymysql"
-    #     elif conn_dict['engine'] == 'postgresql':
-    #         driver = "psycopg2"
-    #     else:
-    #         driver = "None"
-    #
-    #     conn_string = self._connection_format % (
-    #         conn_dict['engine'], driver, conn_dict['user'], conn_dict['password'], conn_dict['address'],
-    #         conn_dict['db'])
-    #     # print conn_string
-    #     return conn_string
 
     def __buildConnectionString(self, conn_dict):
         # driver = ""
