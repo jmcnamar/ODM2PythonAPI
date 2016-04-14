@@ -91,7 +91,7 @@ try:
 
     create.createSamplingFeature(newsf)
     #session.commit()
-    print "new sampling feature added to database", newsf
+    print "new sampling feature successfully added to database", newsf
 
 except Exception as e :
     print "error adding a sampling feature: " + str(e)
