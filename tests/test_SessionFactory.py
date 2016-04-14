@@ -1,6 +1,6 @@
 __author__ = 'valentine'
 from odm2api.ODMconnection import SessionFactory
-from odm2api.ODM2.models import *
+from odm2api.models import *
 import pytest
 from sqlalchemy.engine import reflection
 

@@ -1,9 +1,9 @@
 import pytest
 import datetime
 from os.path import *
-from odm2api.ODM2 import models
+from odm2api import models
 from odm2api.ODMconnection import dbconnection
-from odm2api.ODM2.services.readService import ReadODM2
+from odm2api.services.readService import ReadODM2
 from sqlalchemy.orm import class_mapper
 import sqlalchemy
 

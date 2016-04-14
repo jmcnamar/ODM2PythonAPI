@@ -1,9 +1,9 @@
 import pytest
 import datetime
 from os.path import *
-from odm2api.ODM2 import models
+from odm2api import models
 from odm2api.ODMconnection import dbconnection
-from odm2api.ODM2.services.createService import CreateODM2
+from odm2api.services.createService import CreateODM2
 # run this test from the root directory using:
 # python -m pytest tests/test_odm2/test_createservice.py
 
