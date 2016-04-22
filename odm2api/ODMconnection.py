@@ -15,6 +15,7 @@ class SessionFactory():
     def __init__(self, connection_string, echo=True):
 
         if 'sqlite' in connection_string:
+
             self.engine = create_engine(connection_string,  encoding='utf-8', echo=echo)
             self.test_engine = self.engine
 
@@ -86,9 +87,10 @@ class dbconnection():
             s.test_Session().query(Variable2.VariableCode).limit(1).first()
 
         except Exception as e:
-            print "Connection was unsuccessful ", e.message
+            print("Connection was unsuccessful ", e.message)
             return False
         return True
+
 
 
     def buildConnDict(self, engine, address, db, user, password):
@@ -122,6 +124,11 @@ class dbconnection():
         self._connections[:] = [x for x in self._connections if x != conn_dict]
 
 
+    ## ###################
+    # private variables
+    ## ###################
+
+
 
     def __buildConnectionString(self, conn_dict):
         # driver = ""
@@ -129,10 +136,12 @@ class dbconnection():
         if conn_dict['engine'] == 'mssql' and sys.platform != 'win32':
             driver = "pyodbc"
 
-
-            quoted = urllib.quote_plus('DRIVER={FreeTDS};DSN=%s;UID=%s;PWD=%s;' % (conn_dict['address'], conn_dict['user'], conn_dict['password']))
+            quoted = urllib.quote_plus('DRIVER={FreeTDS};DSN=%s;UID=%s;PWD=%s;' % (conn_dict['address'], conn_dict['user'],
+                                                                                  conn_dict['password']))
             # quoted = urllib.quote_plus('DRIVER={FreeTDS};DSN=%s;UID=%s;PWD=%s;DATABASE=%s' %
-            #                            (conn_dict['address'], conn_dict['user'], conn_dict['password'],conn_dict['db'],))
+            #                            (conn_dict['address'], conn_dict['user'], conn_dict['password'],conn_dict['db'],
+            #                             ))
+
             conn_string = 'mssql+pyodbc:///?odbc_connect={}'.format(quoted)
 
         else:
