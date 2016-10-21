@@ -44,3 +44,21 @@ The database and the dump file were created using PostgreSQL 9.3 and PostGIS 2.1
 ```
 pg_dump -h localhost -p 5432 -d odm2_rivers --exclude-schema=amz_riverbgc -U "postgres" --role="postgres" -W --no-privileges --no-owner --format=p --create --blobs --verbose --file="./marchantariats.sql"
 ```
+
+## windows notes
+open sql shell:
+
+```
+Server [localhost]:
+Database [postgres]:
+Port [5432]:
+Username [postgres]:
+Password for user postgres:
+psql (9.2.4)
+WARNING: Console code page (437) differs from Windows code page (1252)
+         8-bit characters might not work correctly. See psql reference
+         page "Notes for Windows users" for details.
+Type "help" for help.
+
+postgres=# \i D:/dev_odm/ODM2PythonAPI/tests/usecasesql/marchantariats/marchantariats.sql
+```

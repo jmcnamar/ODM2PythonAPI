@@ -1,5 +1,6 @@
 import pytest
 import datetime
+import copy
 from os.path import *
 from odm2api.ODM2 import models
 from odm2api.ODMconnection import dbconnection
@@ -260,7 +261,7 @@ class TestCreateService:
                 AggregationStatisticCV = 'unknown'
 
         )
-
+        rCopy = copy.deepcopy(r)
 
         newres=self.writer.createResult(r)
 
@@ -268,12 +269,12 @@ class TestCreateService:
         tsr = self.engine.execute('SELECT * FROM TimeSeriesResults').first()
         assert(tsr is not None)
 
-        assert (newres == r)
+        #assert (newres == rCopy) # no longer works using inheritance
         result = self.engine.execute('SELECT * FROM Results').first()
         assert(result is not None)
 
-        assert(newres.ResultID ==1)
-        assert(result[0] ==newres.ResultID)
+        assert(tsr[0] ==1) # was newres
+        assert(result[0] ==tsr[0]) # was newres
 
 
 

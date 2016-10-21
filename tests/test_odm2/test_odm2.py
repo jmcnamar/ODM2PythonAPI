@@ -8,6 +8,7 @@ from odm2api.ODM2.services.readService import  ReadODM2
 from odm2api.ODM2.services.createService import CreateODM2
 from odm2api.ODM2.services.updateService import UpdateODM2
 from odm2api.ODM2.services.deleteService import DeleteODM2
+import odm2api.ODM2.models  as models
 
 from tests import test_connection as testConnection
 import pytest
@@ -118,15 +119,17 @@ def test_SessionNotFailed(setup):
 def test_createPerson(setup):
 
     # create some people
-    setup.odmcreate.createPerson(firstName="tony",
-                                lastName='castronova',
-                                middleName='michael')
+    setup.odmcreate.createPerson(
+        models.People(PersonFirstName="tony",
+                                PersonLastName='castronova',
+                                PersonMiddleName='michael')
+    )
 
-    setup.odmcreate.createPerson(firstName="tony",
-                                lastName='castronova',
-                                middleName=None)
-    setup.odmcreate.createPerson(firstName="john",
-                                lastName='doe')
+    setup.odmcreate.createPerson(models.People(PersonFirstName="tony",
+                                PersonLastName='castronova',
+                                PersonMiddleName=None))
+    setup.odmcreate.createPerson(models.People(PersonFirstName="John",
+                                PersonLastName='doe'))
 
     people = setup.odmread.getPeople()
     assert len(people) == 3, "People should have been 3"
@@ -134,42 +137,52 @@ def test_createPerson(setup):
 def test_personFail(setup):
    with pytest.raises(Exception) as excinfo:
         # this one should fail due to a not null constraint
-        setup.odmcreate.createPerson(firstName=None,
-                                lastName='castronova',
-                                middleName='michael')
+        setup.odmcreate.createPerson(
+            models.People(PersonFirstName=None,
+                                PersonLastName='castronova',
+                                PersonMiddleName='michael')
+        )
 
    assert 'null' in str(excinfo.value).lower()
 
 def test_createVariable(setup):
 
     # create some variables
-    setup.odmcreate.createVariable( code = 'Phos_TOT',
-                                   name = 'Phosphorus, total dissolved',
-                                   vType = 'Hydrology',
-                                   nodv = -999,
-                                   speciation =None ,
-                                   definition =None )
-    setup.odmcreate.createVariable( code = 'Phos_TOT2',
-                                   name = 'Phosphorus, total dissolved',
-                                   vType = 'Hydrology',
-                                   nodv = -999,
-                                   speciation ='mg/L' ,
-                                   definition =None )
-    setup.odmcreate.createVariable( code = 'Phos_TOT3',
-                                   name = 'Phosphorus, total dissolved',
-                                   vType = 'Hydrology',
-                                   nodv = -999,
-                                   speciation =None ,
-                                   definition ='some definition' )
+    setup.odmcreate.createVariable(models.Variables( VariableCode = 'Phos_TOT',
+                                                     VariableNameCV = 'Phosphorus, total dissolved',
+                                                     VariableTypeCV = 'Hydrology',
+                                                     NoDataValue = -999,
+                                                     SpeciationCV =None ,
+                                                     VariableDefinition =None
+                                                     )
+                                   )
+    setup.odmcreate.createVariable(
+        models.Variables(VariableCode='Phos_TOT2',
+                         VariableNameCV='Phosphorus, total dissolved',
+                         VariableTypeCV='Hydrology',
+                         NoDataValue=-999,
+                         SpeciationCV='mg/L',
+                         VariableDefinition=None
+                         )
+    )
+    setup.odmcreate.createVariable( models.Variables(VariableCode='Phos_TOT3',
+                         VariableNameCV='Phosphorus, total dissolved',
+                         VariableTypeCV='Hydrology',
+                         NoDataValue=-999,
+                         SpeciationCV='None',
+                         VariableDefinition='some definition'
+                         )
+    )
 
     with pytest.raises(Exception) as excinfo:
         # insert duplicate
-        setup.odmcreate.createVariable(code='Phos_TOT',
-                                       name='Phosphorus, total dissolved',
-                                       vType='Hydrology',
-                                       nodv=-999,
-                                       speciation=None,
-                                       definition=None)
+        setup.odmcreate.createVariable(models.Variables( VariableCode = 'Phos_TOT',
+                                                     VariableNameCV = 'Phosphorus, total dissolved',
+                                                     VariableTypeCV = 'Hydrology',
+                                                     NoDataValue = -999,
+                                                     SpeciationCV =None ,
+                                                     VariableDefinition =None
+                                                     ))
 
     assert 'unique' in str(excinfo.value).lower()
 
@@ -180,33 +193,40 @@ def test_createVariable(setup):
 
 
 def test_createMethod(setup):
-    setup.odmcreate.createMethod(code ='mycode',
-                                name='my test method',
-                                vType='test method type',
-                                orgId=None,
-                                link=None,
-                                description='method description')
-    setup.odmcreate.createMethod(code ='mycode2',
-                                name='my test method',
-                                vType='test method type',
-                                orgId=1,
-                                link=None,
-                                description='method description')
-    setup.odmcreate.createMethod(code ='mycode3',
-                                name='my test method',
-                                vType='test method type',
-                                orgId=None,
-                                link=None,
-                                description=None)
+    setup.odmcreate.createMethod(models.Methods(MethodCode ='mycode',
+                                                MethodName='my test method',
+                                                MethodTypeCV='test method type',
+                                                OrganizationID=None,
+                                                MethodLink=None,
+                                                MethodDescription='method description')
+                                 )
+    setup.odmcreate.createMethod(
+        models.Methods(MethodCode='mycode2',
+                       MethodName='my test method',
+                       MethodTypeCV='test method type',
+                       OrganizationID=None,
+                       MethodLink=None,
+                       MethodDescription='method description')
+    )
+    setup.odmcreate.createMethod(
+        models.Methods(MethodCode='mycode3',
+                       MethodName='my test method',
+                       MethodTypeCV='test method type',
+                       OrganizationID=None,
+                       MethodLink=None,
+                       MethodDescription=None)
+    )
     methods = setup.odmread.getMethods()
 
     assert len(methods) == 3
 
 
 def test_ProcessingLevel(setup):
-    setup.odmcreate.createProcessingLevel(code="testlevel",
-                                         definition="this is a test processing level",
-                                         explanation=None)
+    setup.odmcreate.createProcessingLevel(
+        models.ProcessingLevels (ProcessingLevelCode="testlevel",
+                                 Definition="this is a test processing level",
+                                 Explanation=None)
+    )
     res = setup.odmread.getProcessingLevels()
 
     assert len(res) == 1
@@ -300,29 +320,34 @@ def test_createDeploymentAction(setup):
 def test_createModel(setup):
 
     # create model  (expected: record inserted)
-    setup.odmcreate.createModel(code='model',
-                               name='mymodel',
-                               description='my test model')
+    model1 = models.Models(ModelCode='model',
+                               ModelName='mymodel',
+                        ModelDescription='my test model')
+
+    setup.odmcreate.createModel(model1)
 
     # create with no description (expected: record inserted)
-    setup.odmcreate.createModel(code='model2',
-                               name='mymodel',
-                               description=None)
+    model2 = models.Models(ModelCode='model2',
+                           ModelName='mymodel',
+                           ModelDescription=None)
+    setup.odmcreate.createModel(model2)
 
 
-    res = setup.odmread.getAllModels()
+    res = setup.odmread.getModels()
 
     assert len(res) == 2
 
-    res = setup.odmread.getModelByCode('model')
+    res = setup.odmread.getModels(codes={'model'})
     assert res is not None
-    assert res.ModelCode == 'model'
+    assert len(res) == 1
+    assert res[0].ModelCode == 'model'
 
     with pytest.raises(Exception) as excinfo:
         # create model with duplicate code (expected: fail to insert record)
-        setup.odmcreate.createModel(code='model',
-                                    name='mymodel2',
-                                    description='my test model2')
+        model3 = models.Models(ModelCode='model2',
+                               ModelName='mymodel',
+                               ModelDescription=None)
+        setup.odmcreate.createModel(model3)
     assert 'unique' in str(excinfo.value).lower()
 
 
@@ -331,31 +356,37 @@ def test_createRelatedModel(setup):
     setup.odmcreate.getSession().execute(
         "insert into cv_relationshiptype values ('coupled', 'coupled model', 'models that have been coupled together', 'modeling', NULL)")
     # create model  (expected: record inserted)
-    m1 = setup.odmcreate.createModel(code='model',
-                                     name='mymodel',
-                                     description='my test model')
-    # create model  (expected: record inserted)
-    m2 = setup.odmcreate.createModel(code='model2',
-                                     name='mymodel2',
-                                     description='my test model2')
+    m1 = models.Models(ModelCode='model',
+                           ModelName='mymodel',
+                           ModelDescription='my test model')
+
+    setup.odmcreate.createModel(m1)
+
+    # create with no description (expected: record inserted)
+    m2 = models.Models(ModelCode='model2',
+                           ModelName='mymodel',
+                           ModelDescription=None)
+    setup.odmcreate.createModel(m2)
 
     # create related records
-    setup.odmcreate.createRelatedModel(modelid=m1.ModelID,
-                                       relatedModelID=m2.ModelID,
-                                       relationshipType='coupled')
+    m1relm2 = models.RelatedModels( ModelObj=m1,
+                                    RelatedModelObj=m2,
+                                    RelationshipTypeCV='coupled')
 
-    m1r = setup.odmread.getModelByCode('model')
+    setup.odmcreate.createRelatedModel(m1relm2)
+
+    m1r = setup.odmread.getModels(codes={'model'})
     assert m1r is not None
-    assert m1r.ModelCode == 'model'
+    assert m1r[0].ModelCode == 'model'
 
-    m2r = setup.odmread.getModelByCode('model2')
+    m2r = setup.odmread.getModels(codes={'model2'})
     assert m2r is not None
-    assert m2r.ModelCode == 'model2'
+    assert m2r[0].ModelCode == 'model2'
 
-    m1rel = setup.odmread.getRelatedModelsByCode('model')
+    m1rel = setup.odmread.getRelatedModels(code='model')
     assert len(m1rel) == 1
 
-    m2rel = setup.odmread.getRelatedModelsByCode('model2')
+    m2rel = setup.odmread.getRelatedModels(code='model2')
     assert len(m2rel) == 0
 
 @skipif(True, reason="Needs data")

@@ -1623,7 +1623,7 @@ class TimeSeriesResults(Results):
     __mapper_args__ = {'polymorphic_identity':'Time series coverage'}
 
     # def __repr__(self):
-    #     return "<TimeSeriesResults('%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s')>" % \
+    #     return "<TimeSeriesResults('{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}')>".format\
     #            ( self.FeatureActionID, self.ProcessingLevelID, self.VariableID,
     #              self.self.XLocation, self.YLocation, self.ResultTypeCV,
     #             self.IntendedTimeSpacing, self.AggregationStatisticCV)

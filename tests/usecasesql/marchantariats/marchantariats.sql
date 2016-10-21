@@ -1,4 +1,4 @@
---
+﻿--
 -- PostgreSQL database dump
 --
 
@@ -21,7 +21,7 @@ SET client_min_messages = warning;
 CREATE DATABASE marchantariats WITH TEMPLATE = template0 ENCODING = 'UTF8' ;--LC_COLLATE = 'en_US.UTF-8' LC_CTYPE = 'en_US.UTF-8';
 
 
-\connect marchantariats
+--\connect marchantariats
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;

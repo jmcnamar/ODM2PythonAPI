@@ -2,6 +2,7 @@ __author__ = 'sreeder'
 
 import datetime as dt
 import uuid
+from sqlalchemy import inspect
 
 # from src.api.ODM2.LikeODM1.model import Site
 from odm2api.ODM2.models import *
@@ -117,8 +118,12 @@ class CreateODM2(serviceBase):
 
     #send in any type of result object
     def createResult(self, result):
+
         self._session.add(result)
+        insp = inspect(result)
         self._session.commit()
+        #ris = result.ResultID
+        #print ris
         return result
 
 
