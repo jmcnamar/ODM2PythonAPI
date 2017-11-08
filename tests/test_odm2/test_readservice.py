@@ -88,9 +88,18 @@ class TestReadService:
         # get all models from the database
         res = self.engine.execute('SELECT * FROM SamplingFeatures').fetchone()
         sfid = res[0]
-        # get all simulations using the api
         resapi = self.reader.getSamplingFeatures(ids=[sfid])
         assert resapi is not None
+
+#TODO finish test
+    def test_getSamplingFeatureDatasets(self):
+        res = self.engine.execute('SELECT * FROM DataSetsResults').fetchone()
+
+        sfid = res[0]
+        resapi = self.reader.getSamplingFeatureDatasets(ids=[sfid])
+
+        # assert resapi is not None
+        assert True
 
 # Models
     """

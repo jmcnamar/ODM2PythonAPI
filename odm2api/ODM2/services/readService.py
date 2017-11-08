@@ -372,7 +372,7 @@ class ReadODM2(serviceBase):
             return None
 
     # Sampling Feature
-    def getSamplingFeatures(self, ids=None, codes=None, uuids=None, type=None, wkt=None, results=False):
+    def getSamplingFeatures(self, ids=None, uuids=None, codes=None, type=None, wkt=None, results=False):
         """Retrieve a list of Sampling Feature objects.
 
         If no arguments are passed to the function, or their values are None,
@@ -465,15 +465,46 @@ class ReadODM2(serviceBase):
 
 
     # Action
-    def getActions(self, ids=None, type=None, sfid=None):
+    def getActions(self, ids=None, type=None, sfid=None, beginDate = None, endDate = None):
         """
-        * Pass nothing - returns a list of all Actions
+
         * Pass a list of Action ids - returns a list of Action objects
         * Pass a ActionTypeCV - returns a list of Action objects of that type
         * Pass a SamplingFeature ID - returns a list of Action objects
           associated with that Sampling feature ID, Found through featureAction table
 
         """
+
+        """Retrieve a list of Actions objects.
+
+                If no arguments are passed to the function, or their values are None,
+                all Action objects in the database will be returned.
+
+                Args:
+                    ids (list, optional): List of ActionIDs.
+                    type (str, optional): Type of Sampling Feature from
+                        `controlled vocabulary name <http://vocabulary.odm2.org/actiontype/>`_.
+                    sfid (int  , optional): Whether or not you want to return only the
+                        sampling features that have results associated with them.
+
+                Returns:
+                    list: List of Sampling Feature objects
+
+                Examples:
+                    >>> READ = ReadODM2(SESSION_FACTORY)
+                    >>> READ.getSamplingFeatures(ids=[39, 40])
+                    >>> READ.getSamplingFeatures(codes=['HOME', 'FIELD'])
+                    >>> READ.getSamplingFeatures(uuids=['a6f114f1-5416-4606-ae10-23be32dbc202',
+                    ...                                 '5396fdf3-ceb3-46b6-aaf9-454a37278bb4'])
+                    >>> READ.getSamplingFeatures(type='Site')
+                    >>> READ.getSamplingFeatures(wkt='POINT (30 10)')
+                    >>> READ.getSamplingFeatures(results=True)
+                    >>> READ.getSamplingFeatures(type='Site', results=True)
+
+                """
+
+
+
         a = Actions
         if type == 'equipment':
             a = EquipmentActions
@@ -614,8 +645,8 @@ class ReadODM2(serviceBase):
             return None
 
     # Results
-    def getResults(self, ids=None, type=None, uuids=None, actionid=None, simulationid=None, sfid=None,
-                   variableid=None, siteid=None):
+    def getResults(self, ids=None, uuids=None, type=None, actionid=None, sfid=None, siteid=None,
+                   variableid=None, simulationid=None ):
 
         # TODO what if user sends in both type and actionid vs just actionid
         """Retrieve a list of Result objects.
@@ -632,7 +663,7 @@ class ReadODM2(serviceBase):
             simulationid (int, optional): SimulationID.
             sfid (int, optional): SamplingFeatureID.
             variableid (int, optional): VariableID.
-            siteid (int, optional): SiteID.
+            siteid (int, optional): SiteID. (all of the sampling features related to the given SiteID
 
         Returns:
             list: List of Result objects
